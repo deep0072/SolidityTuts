@@ -14,3 +14,15 @@ contract Laptop is Computer {
         return "i7 gen 16 gb ram 512 ssd";
     }
 }
+
+contract A {
+    function foo() public pure returns (string memory) {
+        return "hi from A to B contract";
+    }
+}
+
+contract B is A {
+    function getFoo() public pure returns (string memory) {
+        return A.foo(); // here we calling parent A contract function
+    }
+}
