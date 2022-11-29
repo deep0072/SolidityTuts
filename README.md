@@ -28,7 +28,7 @@
 
 ## transfer ==> ### use 2308 gas, if trasfer fail for some reason then whole function fails.
 
-### trasfer will be useful there when hacker try to call trasfer again and again then it will fail because it will cross 2300 gas. so it stops trasfer
+### trasfer will be useful there when hacker try to call trasfer again and again then it will fail because it will cross 2300 gas. so it stops transfer
 
 ## send ==> ### use 2300 gas, returns bool in case of successful trasaction or not.
 
