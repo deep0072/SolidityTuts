@@ -12,7 +12,7 @@ library RemoveArray {
 
 contract TestArray {
     // calling library here
-    using RemoveArray for uint[];
+    using RemoveArray for uint[]; // for this data type array attach all function mentioned in RemoveArray library
     uint[] public arr;
 
     function getArray() public returns (uint[] memory) {
