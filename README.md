@@ -33,3 +33,15 @@
 ## send ==> ### use 2300 gas, returns bool in case of successful trasaction or not.
 
 ## call - ### all gas, returns bool and data. can use custom gas value
+
+# fallback and recieve inbuilt function
+
+### fallback ==> must have external visibility, and payable
+
+### fallback function always receives data, but in order to also receive Ether it must be marked payable.
+
+### If the version with parameters is used, input will contain the full data sent to the contract (equal to msg.data) and can return data in output
+
+### receive ==> must have external visibility, and payable
+
+### but in order to also receive Ether it must be marked payable
