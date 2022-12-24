@@ -10,7 +10,11 @@
   "license": "ISC",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^2.0.0",
-    "hardhat": "^2.12.4"
+    "chai": "^4.3.7",
+    "ethers": "^5.7.2",
+    "hardhat": "^2.12.4",
+    "hardhat-gas-reporter": "^1.0.9",
+    "mocha": "^10.2.0"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^4.8.0"
