@@ -83,7 +83,7 @@ contract MultiSig {
                 value: _value,
                 data: _data,
                 executed: false,
-                numsConfirmation: 0,
+                numsConfirmation: 0
             })
         );
 
@@ -101,7 +101,7 @@ contract MultiSig {
     }
 
 
-    function executeTransaction(uint _txIndex) public onlyOwner txExist(_txIndex) txNotExecuted(_txIndex) notTxConfirmed(_txIndex) {
+    function executeTransaction(uint _txIndex) public onlyOwner txExist(_txIndex) txNotExecuted(_txIndex) {
         Transactions storage transaction = transactions[_txIndex];
         require(transaction.numsConfirmation >= numsConfirmationsRequired, "cant execute");
         transaction.executed = true;
@@ -132,20 +132,28 @@ contract MultiSig {
         return transactions.length;
     } 
 
-    function getTransaction(uint _txIndex) public view returns( address to, uint value, bytes[] data, uint numocnfirmations){
-        Transactions memory transaction = transactions[_txIndex];
+      function getTransaction(uint _txIndex)
+        public
+        view
+        returns (
+            address to,
+            uint value,
+            bytes memory data,            
+            uint numConfirmations
+        )
+    {
+        Transactions storage transaction = transactions[_txIndex];
 
         return (
             transaction.to,
             transaction.value,
             transaction.data,            
             transaction.numsConfirmation
-
-
         );
 
        
 
-       
+        
     }
+
 }
