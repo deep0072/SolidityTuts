@@ -7,6 +7,7 @@ contract MultiSig {
     event ConfirmTransaction(address indexed owner, uint txIndex);
     event ExecuteTransaction(address indexed owner, uint txIndex);
     event Revoke(address indexed owner, uint txIndex);
+    event deposit(address indexed sender, uint value, uint recipientAmount);
     // first intialise the array of addresses
     address[] public owners;
 
@@ -73,6 +74,11 @@ contract MultiSig {
         numsConfirmationsRequired = _numsConfirmationsRequired;
     }
 
+
+    receive() external payable {
+        emit deposit(msg.sender,msg.value,address(this).balance);
+
+    }
     // submit transaction 
     function submitTransaction(address _to, uint _value, bytes memory _data) public onlyOwner{
 
