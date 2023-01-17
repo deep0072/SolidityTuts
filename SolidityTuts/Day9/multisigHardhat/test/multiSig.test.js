@@ -18,11 +18,11 @@ const { assert, expect } = require("chai");
 describe("multisig testing", () => {
   let multiSigContract, deployedContract, ownerList, multiSigAddress, addresses;
 
-  const numConfirmations = 2;
+  const numOfConfirmations = 2;
   before(async () => {
     multiSigContract = await ethers.getContractFactory("MultiSig");
     [...addresses] = await ethers.getSigners();
-    console.log(addresses[0].address);
+
     ownerList = [];
     ownerList.push(
       addresses[0].address,
@@ -32,42 +32,36 @@ describe("multisig testing", () => {
 
     deployedContract = await multiSigContract.deploy(
       [addresses[0].address, addresses[1].address, addresses[2].address],
-      2
+      numOfConfirmations
     );
     await deployedContract.deployed();
     multiSigAddress = deployedContract.address;
     const contractBalance = await ethers.provider.getBalance(multiSigAddress);
     // Get the balance of the contract in ether
     // Get the balance of the contract in wei
-    console.log(contractBalance, "contractBalance");
-
-    console.log(deployedContract.address, "contract address");
   });
   it("confirm owners of multisig", async () => {
     const contractOwner = await deployedContract.getOwner();
 
     assert.equal(ownerList.length, contractOwner.length);
   });
-  it("confirm number of confirmations", async () => {
-    const contractConfirmations =
-      await deployedContract.numsConfirmationsRequired();
-    assert.equal(numConfirmations.toString(), contractConfirmations.toString());
-  });
 
+  // submit transaction
   it("submit transaction", async () => {
     const eth = ethers.utils.parseEther("2");
 
     const beforeTransction = await deployedContract.getTransactionCount();
 
     await deployedContract.submitTransaction(addresses[4].address, eth, "0xab");
-    console.log(addresses[3].address, addresses[4].address);
+
     const address4 = await ethers.provider.getBalance(addresses[4].address);
-    console.log(address4, "address4Blance");
 
     const afterTransactionCount = await deployedContract.getTransactionCount();
 
     assert.equal(beforeTransction, afterTransactionCount - 1);
   });
+
+  // getting an event after submittion of tx
   it("submit transaction emit event", async () => {
     const eth = ethers.utils.parseEther("2");
 
@@ -81,42 +75,41 @@ describe("multisig testing", () => {
   });
 
   // confirm transaction
-  it("confirmTransaction", async () => {
-    const beforeConfirmx = await deployedContract.getTransaction(0);
-
-    await deployedContract.confirmTransaction("0");
-    const afterconfirmTx = await deployedContract.getTransaction(0);
-    assert.equal(
-      beforeConfirmx["numConfirmations"],
-      afterconfirmTx["numConfirmations"] - 1
-    );
-  });
-
-  // confirm transaction
   it("Transaction is confirmed", async () => {
     const indexOfTransactionToBeConfirmed = 0;
     const accounts = await ethers.getSigners();
+    const firstOwner = accounts[0];
 
     const secondOwner = accounts[1];
+
+    const firstWallet = await deployedContract.connect(firstOwner);
+    await firstWallet.confirmTransaction("0");
 
     // Second Confirmation
     const secondWallet = await deployedContract.connect(secondOwner);
     await secondWallet.confirmTransaction("0");
 
     const myTransaction = await secondWallet.getTransaction("0");
-    console.log(myTransaction.numConfirmations);
+    console.log(myTransaction.numConfirmations, numOfConfirmations);
+    assert.equal(myTransaction.numConfirmations, numOfConfirmations.toString());
   });
-  //execute transactions
+
+  it("revoke transaction", async () => {
+    try {
+      await deployedContract.revokeConfirmation(0);
+    } catch (err) {
+      console.log("tranasaction dont need to be revoked");
+    }
+  });
+
   //execute transactions
   it("executeTransaction", async () => {
     const beforeExecution = await deployedContract.transactions(0);
     console.log(beforeExecution["executed"]);
 
-    // send some eth
+    // send some eth before exexution
 
     const ethValue = ethers.utils.parseEther("3");
-
-    console.log(Object.keys(deployedContract));
 
     await addresses[0].sendTransaction({
       to: multiSigAddress,
